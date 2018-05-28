@@ -17,28 +17,14 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
 USE `mydb` ;
 
--- -----------------------------------------------------
--- Table `mydb`.`Ventes`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Ventes` (
-  `id_vente` INT NOT NULL,
-  PRIMARY KEY (`id_vente`))
-ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
--- Table `mydb`.`Temps`
+-- Table `mydb`.`Anneé`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Temps` (
-  `id_temps` INT NOT NULL,
-  `Ventes_id_vente` INT NOT NULL,
-  PRIMARY KEY (`id_temps`, `Ventes_id_vente`),
-  INDEX `fk_Temps_Ventes1_idx` (`Ventes_id_vente` ASC),
-  CONSTRAINT `fk_Temps_Ventes1`
-    FOREIGN KEY (`Ventes_id_vente`)
-    REFERENCES `mydb`.`Ventes` (`id_vente`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE )
+CREATE TABLE IF NOT EXISTS `mydb`.`Anneé` (
+  `id_anneé` INT NOT NULL,
+  `nom_anneé` VARCHAR(45) NULL,
+  PRIMARY KEY (`id_anneé`))
 ENGINE = InnoDB;
 
 
@@ -48,40 +34,16 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `mydb`.`Mois` (
   `id_mois` INT NOT NULL,
   `nom_mois` VARCHAR(45) NULL,
-  `Temps_id_temps` INT NOT NULL,
-  PRIMARY KEY (`id_mois`, `Temps_id_temps`),
-  INDEX `fk_Mois_Temps1_idx` (`Temps_id_temps` ASC),
-  CONSTRAINT `fk_Mois_Temps1`
-    FOREIGN KEY (`Temps_id_temps`)
-    REFERENCES `mydb`.`Temps` (`id_temps`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`Anneé`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Anneé` (
   `id_anneé` INT NOT NULL,
-  `nom_anneé` VARCHAR(45) NULL,
-  `Mois_id_mois` INT NOT NULL,
-  PRIMARY KEY (`id_anneé`, `Mois_id_mois`),
-  INDEX `fk_Anneé_Mois_idx` (`Mois_id_mois` ASC),
-  CONSTRAINT `fk_Anneé_Mois`
-    FOREIGN KEY (`Mois_id_mois`)
-    REFERENCES `mydb`.`Mois` (`id_mois`)
+  PRIMARY KEY (`id_mois`),
+  CONSTRAINT `fk_Mois_Annee`
+    FOREIGN KEY (`id_anneé`)
+    REFERENCES `mydb`.`Anneé` (`id_anneé`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE )
+    ON UPDATE CASCADE 
+  )
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `mydb`.`table1`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`table1` (
-)
-ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -90,14 +52,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `mydb`.`Ville` (
   `id_ville` INT NOT NULL,
   `nom_vile` VARCHAR(45) NULL,
-  `Ventes_id_vente` INT NOT NULL,
-  PRIMARY KEY (`id_ville`, `Ventes_id_vente`),
-  INDEX `fk_Ville_Ventes1_idx` (`Ventes_id_vente` ASC),
-  CONSTRAINT `fk_Ville_Ventes1`
-    FOREIGN KEY (`Ventes_id_vente`)
-    REFERENCES `mydb`.`Ventes` (`id_vente`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE )
+  PRIMARY KEY (`id_ville`))
 ENGINE = InnoDB;
 
 
@@ -107,12 +62,26 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `mydb`.`Departement` (
   `id_departement` INT NOT NULL,
   `nom_departement` VARCHAR(45) NULL,
-  `Ville_id_ville` INT NOT NULL,
-  PRIMARY KEY (`id_departement`, `Ville_id_ville`),
-  INDEX `fk_Departement_Ville1_idx` (`Ville_id_ville` ASC),
-  CONSTRAINT `fk_Departement_Ville1`
-    FOREIGN KEY (`Ville_id_ville`)
+  `id_ville` INT NOT NULL,
+  PRIMARY KEY (`id_departement`),
+    CONSTRAINT `fk_Departement_Ville1`
+    FOREIGN KEY (`id_ville`)
     REFERENCES `mydb`.`Ville` (`id_ville`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE )
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Ventes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Ventes` (
+  `nombre_de_ventes` INT NOT NULL,
+  `id_mois` INT NOT NULL,
+  `id_departement` INT NOT NULL,
+  PRIMARY KEY (`id_mois`,`id_departement`),
+  CONSTRAINT `fk_Ventes_Mois`
+    FOREIGN KEY (`id_mois`)
+    REFERENCES `mydb`.`Mois` (`id_mois`)
     ON DELETE CASCADE
     ON UPDATE CASCADE )
 ENGINE = InnoDB;
